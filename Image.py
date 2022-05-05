@@ -173,3 +173,27 @@ class Image:
         new_image = Image(matrix=new_matrix, type="P2", width=self.width,
                           height=self.height, max_gray=self.max_gray)
         return new_image
+
+    def average_filter(self, size):
+        if (size % 2 == 0):
+            raise Exception('filter size must be odd')
+
+        new_matrix = []
+        for h in range(self.height):
+            row = []
+            for w in range(self.width):
+                pixels = []
+
+                for fh in range(h-size//2, h+size//2):
+                    for fw in range(w-size//2, w+size//2):
+                        if(fh < 0 or fh >= self.height or fw < 0 or fw >= self.width):
+                            continue
+                        else:
+                            pixels.append(self.matrix[fh][fw])
+                average = sum(pixels)/len(pixels)
+                row.append(int(average))
+            new_matrix.append(row)
+
+        new_image = Image(matrix=new_matrix, type="P2", width=self.width,
+                          height=self.height, max_gray=self.max_gray)
+        return new_image

@@ -16,6 +16,5 @@ image.load_from_pgm(path3)
 # new_image = image.histogram_equalizer()
 # new_image.save_to_pgm()
 
-filtered_image = image.median_filter(5)
+filtered_image = image.average_filter(5)
 filtered_image.save_to_pgm()
-
