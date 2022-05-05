@@ -97,14 +97,16 @@ class Image:
                 row.append(LUT[self.matrix[h][w]])
             newMatrix.append(row)
 
-        return(newMatrix)
+        newImage = Image(matrix=newMatrix, type="P2", width=self.width,
+                         height=self.height, maxGray=self.maxGray)
+        return newImage
 
-    def saveNewImage(self, newMatrix):
+    def save_to_pgm(self):
 
         f = open("samples/output/{0}.pgm".format(round(time.time())), "w")
-        f.write("P2\n{0} {1}\n{2}\n".format(
-            self.width, self.height, self.maxGray))
+        f.write("{0}\n{1} {2}\n{3}\n".format(
+            self.type, self.width, self.height, self.maxGray))
 
         for h in range(self.height):
-            f.write(' '.join([str(elem) for elem in newMatrix[h]])+'\n')
+            f.write(' '.join([str(elem) for elem in self.matrix[h]])+'\n')
         f.close()
