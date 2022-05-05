@@ -1,6 +1,7 @@
 import math
 import numpy as np
 import time
+from random import randrange
 
 
 class Image:
@@ -128,3 +129,23 @@ class Image:
         new_image = Image(matrix=new_matrix, type="P2", width=self.width,
                          height=self.height, max_gray=self.max_gray)
         return new_image
+    
+    def generate_random_noise(self):
+        new_matrix = []
+        for h in range(self.height):
+            row = []
+            for w in range(self.width):
+                random_val=randrange(21)
+                if(random_val==0):
+                    row.append(0)
+                elif(random_val==20):
+                    row.append(255)
+                else:
+                    row.append(self.matrix[h][w])
+            new_matrix.append(row)
+            
+        new_image = Image(matrix=new_matrix, type="P2", width=self.width,
+                         height=self.height, max_gray=self.max_gray)
+        return new_image
+           
+        
