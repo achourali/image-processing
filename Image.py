@@ -8,14 +8,14 @@ class Image:
     type = ""
     width = 0
     height = 0
-    maxGray = 0
+    max_gray = 0
 
-    def __init__(self, matrix=None, type="", width=0, height=0, maxGray=0):
+    def __init__(self, matrix=None, type="", width=0, height=0, max_gray=0):
         self.matrix = matrix
         self.type = type
         self.width = width
         self.height = height
-        self.maxGray = maxGray
+        self.max_gray = max_gray
 
     def load_from_pgm(self, pgmPath):
 
@@ -24,9 +24,9 @@ class Image:
         line = file.readline()
         while chr(line[0]) == '#':
             line = file.readline()
-        widthBinary, heightBinary = line.split()
-        self.width, self.height = int(widthBinary), int(heightBinary)
-        self.maxGray = int(file.readline())
+        width_binary, height_binary = line.split()
+        self.width, self.height = int(width_binary), int(height_binary)
+        self.max_gray = int(file.readline())
         self.matrix = []
         if(self.type == "P5"):
             for i in range(self.height):
@@ -57,7 +57,7 @@ class Image:
         return math.sqrt(sum / (self.width*self.height))
 
     def histogram(self):
-        histogram = [0] * (self.maxGray + 1)
+        histogram = [0] * (self.max_gray + 1)
         for h in range(self.height):
             for w in range(self.width):
                 histogram[self.matrix[h][w]] += 1
@@ -65,9 +65,9 @@ class Image:
 
     def cumulated_histogram(self):
         histogram = self.histogram()
-        cumulated_histogram = [0] * (self.maxGray + 1)
+        cumulated_histogram = [0] * (self.max_gray + 1)
         cumulated_histogram[0] = histogram[0]
-        for i in range(1, self.maxGray + 1):
+        for i in range(1, self.max_gray + 1):
             cumulated_histogram[i] = histogram[i] + cumulated_histogram[i - 1]
         return cumulated_histogram
 
@@ -81,31 +81,31 @@ class Image:
             trans_x.append(x)
             trans_y.append(y)
 
-        trans_x.append(self.maxGray)
-        trans_y.append(self.maxGray)
+        trans_x.append(self.max_gray)
+        trans_y.append(self.max_gray)
 
-        LUT = [0]*(self.maxGray+1)
+        LUT = [0]*(self.max_gray+1)
 
-        for g in range(self.maxGray+1):
+        for g in range(self.max_gray+1):
             LUT[g] = int(np.interp(g, trans_x, trans_y))
 
-        newMatrix = []
+        new_matrix = []
 
         for h in range(self.height):
             row = []
             for w in range(self.width):
                 row.append(LUT[self.matrix[h][w]])
-            newMatrix.append(row)
+            new_matrix.append(row)
 
-        newImage = Image(matrix=newMatrix, type="P2", width=self.width,
-                         height=self.height, maxGray=self.maxGray)
-        return newImage
+        new_image = Image(matrix=new_matrix, type="P2", width=self.width,
+                         height=self.height, max_gray=self.max_gray)
+        return new_image
 
     def save_to_pgm(self):
 
         f = open("samples/output/{0}.pgm".format(round(time.time())), "w")
         f.write("{0}\n{1} {2}\n{3}\n".format(
-            self.type, self.width, self.height, self.maxGray))
+            self.type, self.width, self.height, self.max_gray))
 
         for h in range(self.height):
             f.write(' '.join([str(elem) for elem in self.matrix[h]])+'\n')
@@ -114,9 +114,9 @@ class Image:
     def histogram_equalizer(self):
 
         cumulated_histogram = self.cumulated_histogram()
-        LUT = [0] * (self.maxGray + 1)
-        for i in range(self.maxGray + 1):
-            LUT[i] = int(self.maxGray * cumulated_histogram[i] /
+        LUT = [0] * (self.max_gray + 1)
+        for i in range(self.max_gray + 1):
+            LUT[i] = int(self.max_gray * cumulated_histogram[i] /
                          (self.height*self.width))
         new_matrix = []
         for h in range(self.height):
@@ -126,5 +126,5 @@ class Image:
             new_matrix.append(row)
 
         new_image = Image(matrix=new_matrix, type="P2", width=self.width,
-                         height=self.height, maxGray=self.maxGray)
+                         height=self.height, max_gray=self.max_gray)
         return new_image

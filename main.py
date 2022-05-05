@@ -13,5 +13,5 @@ image.load_from_pgm(path1)
 # print(image.histogram())
 # print(image.cumulated_histogram())
 
-newImage = image.histogram_equalizer()
-newImage.save_to_pgm()
+new_image = image.histogram_equalizer()
+new_image.save_to_pgm()
