@@ -197,3 +197,16 @@ class Image:
         new_image = Image(matrix=new_matrix, type="P2", width=self.width,
                           height=self.height, max_gray=self.max_gray)
         return new_image
+
+    @staticmethod
+    def signal_to_noise_ratio(original_image, filtered_image):
+
+        orig_img_avg = original_image.average()
+        S,B=(0,0)
+
+        for h in range(original_image.height):
+            for w in range(original_image.width):
+                S += (original_image.matrix[h][w]-orig_img_avg)**2
+                B += (filtered_image.matrix[h][w]-original_image.matrix[h][w])**2
+
+        return math.sqrt(S/B)
