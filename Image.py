@@ -99,7 +99,7 @@ class Image:
             new_matrix.append(row)
 
         new_image = Image(matrix=new_matrix, type="P2", width=self.width,
-                         height=self.height, max_gray=self.max_gray)
+                          height=self.height, max_gray=self.max_gray)
         return new_image
 
     def save_to_pgm(self):
@@ -127,25 +127,49 @@ class Image:
             new_matrix.append(row)
 
         new_image = Image(matrix=new_matrix, type="P2", width=self.width,
-                         height=self.height, max_gray=self.max_gray)
+                          height=self.height, max_gray=self.max_gray)
         return new_image
-    
+
     def generate_random_noise(self):
         new_matrix = []
         for h in range(self.height):
             row = []
             for w in range(self.width):
-                random_val=randrange(21)
-                if(random_val==0):
+                random_val = randrange(21)
+                if(random_val == 0):
                     row.append(0)
-                elif(random_val==20):
+                elif(random_val == 20):
                     row.append(255)
                 else:
                     row.append(self.matrix[h][w])
             new_matrix.append(row)
-            
+
         new_image = Image(matrix=new_matrix, type="P2", width=self.width,
-                         height=self.height, max_gray=self.max_gray)
+                          height=self.height, max_gray=self.max_gray)
         return new_image
-           
-        
+
+    def median_filter(self, size):
+        if (size % 2 == 0):
+            raise Exception('filter size must be odd')
+
+        new_matrix = []
+        for h in range(self.height):
+            row = []
+            for w in range(self.width):
+                pixels = []
+
+                for fh in range(h-size//2, h+size//2):
+                    for fw in range(w-size//2, w+size//2):
+                        if(fh < 0 or fh >= self.height or fw < 0 or fw >= self.width):
+                            continue
+                        else:
+                            pixels.append(self.matrix[fh][fw])
+
+                pixels.sort()
+                median = pixels[len(pixels)//2]
+                row.append(median)
+            new_matrix.append(row)
+
+        new_image = Image(matrix=new_matrix, type="P2", width=self.width,
+                          height=self.height, max_gray=self.max_gray)
+        return new_image
