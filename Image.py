@@ -1,13 +1,15 @@
 import math
+import numpy as np
+import time
 
 class Image:
-    matrix=None
-    type=""
-    width=0
-    height=0
-    maxGray=0
-    
-    def __init__(self,pgmPath):
+    matrix = None
+    type = ""
+    width = 0
+    height = 0
+    maxGray = 0
+
+    def __init__(self, pgmPath):
         file = open(pgmPath, 'rb')
         self.type = file.readline().decode().strip()
         line = file.readline()
@@ -27,17 +29,16 @@ class Image:
                 row = line.split()
                 row = list(map(int, row))
                 self.matrix.append(row)
-        
+
         file.close()
-        
+
     def average(self):
         sum = 0
         for h in range(self.height):
             for w in range(self.width):
                 sum += self.matrix[h][w]
         return sum / (self.width*self.height)
-    
-    
+
     def standard_deviation(self):
         average = self.average()
         sum = 0
@@ -45,16 +46,14 @@ class Image:
             for w in range(self.width):
                 sum += (self.matrix[h][w] - average) ** 2
         return math.sqrt(sum / (self.width*self.height))
-    
-    
+
     def histogram(self):
         histogram = [0] * (self.maxGray + 1)
         for h in range(self.height):
             for w in range(self.width):
                 histogram[self.matrix[h][w]] += 1
         return histogram
-    
-    
+
     def cumulated_histogram(self):
         histogram = self.histogram()
         cumulated_histogram = [0] * (self.maxGray + 1)
@@ -63,6 +62,40 @@ class Image:
             cumulated_histogram[i] = histogram[i] + cumulated_histogram[i - 1]
         return cumulated_histogram
 
+    def saturation_transformation(self, saturation_points):
+        # points in an array of tuples (x,y)
+        trans_x = [0]
+        trans_y = [0]
 
+        for point in saturation_points:
+            x, y = point
+            trans_x.append(x)
+            trans_y.append(y)
 
-        
+        trans_x.append(self.maxGray)
+        trans_y.append(self.maxGray)
+
+        LUT = [0]*(self.maxGray+1)
+
+        for g in range(self.maxGray+1):
+            LUT[g] = int(np.interp(g, trans_x, trans_y))
+
+        newMatrix = []
+
+        for h in range(self.height):
+            row = []
+            for w in range(self.width):
+                row.append(LUT[self.matrix[h][w]])
+            newMatrix.append(row)
+
+        self.saveNewImage(newMatrix)
+
+    def saveNewImage(self, newMatrix):
+
+        f = open("samples/output/{0}.pgm".format(round(time.time())), "w")
+        f.write("P2\n{0} {1}\n{2}\n".format(
+             self.width, self.height, self.maxGray))
+
+        for h in range(self.height):
+            f.write(' '.join([str(elem) for elem in newMatrix[h]])+'\n')
+        f.close()
