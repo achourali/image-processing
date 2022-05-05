@@ -110,3 +110,21 @@ class Image:
         for h in range(self.height):
             f.write(' '.join([str(elem) for elem in self.matrix[h]])+'\n')
         f.close()
+
+    def histogram_equalizer(self):
+
+        cumulated_histogram = self.cumulated_histogram()
+        LUT = [0] * (self.maxGray + 1)
+        for i in range(self.maxGray + 1):
+            LUT[i] = int(self.maxGray * cumulated_histogram[i] /
+                         (self.height*self.width))
+        new_matrix = []
+        for h in range(self.height):
+            row = []
+            for w in range(self.width):
+                row.append(LUT[self.matrix[h][w]])
+            new_matrix.append(row)
+
+        new_image = Image(matrix=new_matrix, type="P2", width=self.width,
+                         height=self.height, maxGray=self.maxGray)
+        return new_image

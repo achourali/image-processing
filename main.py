@@ -13,5 +13,5 @@ image.load_from_pgm(path1)
 # print(image.histogram())
 # print(image.cumulated_histogram())
 
-newImage = image.saturation_transformation([(3, 0), (100, image.maxGray)])
+newImage = image.histogram_equalizer()
 newImage.save_to_pgm()
