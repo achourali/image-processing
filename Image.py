@@ -2,6 +2,7 @@ import math
 import numpy as np
 import time
 
+
 class Image:
     matrix = None
     type = ""
@@ -9,7 +10,15 @@ class Image:
     height = 0
     maxGray = 0
 
-    def __init__(self, pgmPath):
+    def __init__(self, matrix=None, type="", width=0, height=0, maxGray=0):
+        self.matrix = matrix
+        self.type = type
+        self.width = width
+        self.height = height
+        self.maxGray = maxGray
+
+    def load_from_pgm(self, pgmPath):
+
         file = open(pgmPath, 'rb')
         self.type = file.readline().decode().strip()
         line = file.readline()
@@ -88,13 +97,13 @@ class Image:
                 row.append(LUT[self.matrix[h][w]])
             newMatrix.append(row)
 
-        self.saveNewImage(newMatrix)
+        return(newMatrix)
 
     def saveNewImage(self, newMatrix):
 
         f = open("samples/output/{0}.pgm".format(round(time.time())), "w")
         f.write("P2\n{0} {1}\n{2}\n".format(
-             self.width, self.height, self.maxGray))
+            self.width, self.height, self.maxGray))
 
         for h in range(self.height):
             f.write(' '.join([str(elem) for elem in newMatrix[h]])+'\n')
