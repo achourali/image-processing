@@ -73,36 +73,13 @@ class GUI:
         self.inputImage.load_from_pgm(filename)
         self.inputCanvas.destroy()
         self.initInputCanvas()
-        if(self.inputImage.type != "P2"):
-            img = PhotoImage(file=filename)
-            canvas = Canvas(self.inputCanvas)
-            canvas.create_image(0, 0, anchor=NW, image=img)
-            canvas.grid(column=1, row=2, sticky='w')
-        else:
-            with open(filename) as f:
-                lines = f.readlines()
-
-            # Ignores commented lines
-            for l in list(lines):
-                if l[0] == '#':
-                    lines.remove(l)
-
-            # Makes sure it is ASCII format (P2)
-            assert lines[0].strip() == 'P2'
-
-            # Converts data to a list of integers
-            data = []
-            for line in lines[1:]:
-                data.extend([int(c) for c in line.split()])
-
-            data = (np.array(data[3:]), (data[1], data[0]), data[2])
-
-            fig = plt.Figure(figsize=(6, 5), dpi=100)
-            ax = fig.add_subplot(111)
-            ax.imshow(np.reshape(data[0], data[1]), cmap='gray')
-            canvas = FigureCanvasTkAgg(fig, self.inputCanvas)
-            canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
-            canvas.draw()
+        fig = plt.Figure(figsize=(4,4), dpi=96)
+        ax = fig.add_subplot(111)
+        ax.imshow(self.inputImage.matrix, cmap='gray')
+        ax.axis('off')
+        canvas = FigureCanvasTkAgg(fig, self.inputCanvas)
+        canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
+        canvas.draw()
 
         self.updateInfo('input')
         self.root.mainloop()
@@ -163,37 +140,19 @@ class GUI:
 
     def histogram_equalizer(self):
         self.outputImage = self.inputImage.histogram_equalizer()
-        self.outputImage.save_to_pgm("/tmp/output.pgm")
         self.updateOutput()
 
     def updateOutput(self):
-        
+
         self.outputCanvas.destroy()
         self.initOutputCanvas()
-        if(self.outputImage.type != "P2"):
-            img = PhotoImage(file="/tmp/output.pgm")
-            canvas = Canvas(self.outputCanvas)
-            canvas.create_image(0, 0, anchor=NW, image=img)
-            canvas.grid(column=1, row=2, sticky='w')
-        else:
-            with open("/tmp/output.pgm") as f:
-                lines = f.readlines()
-            for l in list(lines):
-                if l[0] == '#':
-                    lines.remove(l)
-            assert lines[0].strip() == 'P2'
-            data = []
-            for line in lines[1:]:
-                data.extend([int(c) for c in line.split()])
-
-            data = (np.array(data[3:]), (data[1], data[0]), data[2])
-
-            fig = plt.Figure(figsize=(6, 5), dpi=100)
-            ax = fig.add_subplot(111)
-            ax.imshow(np.reshape(data[0], data[1]), cmap='gray')
-            canvas = FigureCanvasTkAgg(fig, self.outputCanvas)
-            canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
-            canvas.draw()
+        fig = plt.Figure(figsize=(4,4), dpi=96)
+        ax = fig.add_subplot(111)
+        ax.imshow(self.outputImage.matrix, cmap='gray')
+        ax.axis('off')
+        canvas = FigureCanvasTkAgg(fig, self.outputCanvas)
+        canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
+        canvas.draw()
 
         self.updateInfo('output')
         self.root.mainloop()
