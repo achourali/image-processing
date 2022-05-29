@@ -1,9 +1,11 @@
 import tkinter as tk
-from tkinter import Menu, filedialog, Canvas, PhotoImage, NW,Label,Text
+from tkinter import Menu, filedialog, Canvas, PhotoImage, NW, Label, Text
 from Image import Image
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import numpy as np
+
 
 class GUI:
     root = tk.Tk()
@@ -25,106 +27,145 @@ class GUI:
             label='Save output',
             command=self.saveOutput
         )
-        
+
         menubar.add_cascade(
             label="File",
             menu=file_menu
         )
-        
+
         operations_menu = Menu(menubar)
 
         operations_menu.add_command(
             label='histogram equalizer',
             command=self.histogram_equalizer
         )
-        
+
         menubar.add_cascade(
             label="Operations",
             menu=operations_menu
         )
 
-        self.inputCanvas = Canvas(self.root, width=500, height=400)
-        Label(self.inputCanvas, text="INPUT").grid(column=1,row=1,sticky='w')
-        self.inputCanvas.grid(column=1,row=1,sticky='w')
-        self.inputInfo=Canvas(self.inputCanvas)
-        
+        self.initInputCanvas()
 
-        self.outputCanvas = Canvas(self.root, width=500, height=400)
-        Label(self.outputCanvas, text="OUTPUT").grid(column=1,row=1,sticky='w')
-        self.outputCanvas.grid(column=1,row=2,sticky='w')
-        self.outputInfo=Canvas(self.outputCanvas)
+        self.initOutputCanvas()
 
         self.root.mainloop()
+
+    def initInputCanvas(self):
+
+        self.inputCanvas = Canvas(self.root, width=500, height=400)
+        Label(self.inputCanvas, text="INPUT").grid(column=1, row=1, sticky='w')
+        self.inputCanvas.grid(column=1, row=1, sticky='w')
+        self.inputInfo = Canvas(self.inputCanvas)
+
+    def initOutputCanvas(self):
+
+        self.outputCanvas = Canvas(self.root, width=500, height=400)
+        Label(self.outputCanvas, text="OUTPUT").grid(
+            column=1, row=1, sticky='w')
+        self.outputCanvas.grid(column=1, row=2, sticky='w')
+        self.outputInfo = Canvas(self.outputCanvas)
 
     def openInput(self):
         filename = filedialog.askopenfilename(
             initialdir="./samples", title="Select a File")
-        self.inputImage=Image()
+        self.inputImage = Image()
         self.inputImage.load_from_pgm(filename)
-        img = PhotoImage(file=filename)
-        canvas=Canvas(self.inputCanvas)
-        canvas.create_image(0, 0, anchor=NW, image=img)
-        canvas.grid(column=1,row=2,sticky='w')
+        self.inputCanvas.destroy()
+        self.initInputCanvas()
+        if(self.inputImage.type != "P2"):
+            img = PhotoImage(file=filename)
+            canvas = Canvas(self.inputCanvas)
+            canvas.create_image(0, 0, anchor=NW, image=img)
+            canvas.grid(column=1, row=2, sticky='w')
+        else:
+            with open(filename) as f:
+                lines = f.readlines()
+
+            # Ignores commented lines
+            for l in list(lines):
+                if l[0] == '#':
+                    lines.remove(l)
+
+            # Makes sure it is ASCII format (P2)
+            assert lines[0].strip() == 'P2'
+
+            # Converts data to a list of integers
+            data = []
+            for line in lines[1:]:
+                data.extend([int(c) for c in line.split()])
+
+            data = (np.array(data[3:]), (data[1], data[0]), data[2])
+
+            fig = plt.Figure(figsize=(6, 5), dpi=100)
+            ax = fig.add_subplot(111)
+            ax.imshow(np.reshape(data[0], data[1]), cmap='gray')
+            canvas = FigureCanvasTkAgg(fig, self.inputCanvas)
+            canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
+            canvas.draw()
+
         self.updateInfo('input')
         self.root.mainloop()
-      
-    
-    def updateInfo(self,element):
+
+    def updateInfo(self, element):
         '''element is string can be 'input' or 'output'  '''
-        if(element=='input'):
-            canvas=self.inputCanvas
-            image=self.inputImage
-            infoCanvas=self.inputInfo
-        elif(element=='output'):
-            canvas=self.outputCanvas
-            image=self.outputImage
-            infoCanvas=self.outputInfo
+        if(element == 'input'):
+            canvas = self.inputCanvas
+            image = self.inputImage
+            infoCanvas = self.inputInfo
+        elif(element == 'output'):
+            canvas = self.outputCanvas
+            image = self.outputImage
+            infoCanvas = self.outputInfo
         else:
             return
 
         infoCanvas.destroy()
-        infoCanvas=Canvas(canvas)
-        infoCanvas.grid(column=2,row=1,rowspan=2,sticky='n')
-        Label(infoCanvas, text = f'height {image.height}').grid(column=1,row=1,sticky='w')
-        Label(infoCanvas, text = f'width {image.width}').grid(column=1,row=2,sticky='w')
-        Label(infoCanvas, text = f'average {image.average()}').grid(column=1,row=3,sticky='w')
-        Label(infoCanvas, text = f'standard_deviation {image.standard_deviation()}').grid(column=1,row=4,sticky='w')
-        data={
-            'level':range(image.max_gray+1),
-            'nb_pixels':image.histogram()
+        infoCanvas = Canvas(canvas)
+        infoCanvas.grid(column=2, row=1, rowspan=2, sticky='n')
+        Label(infoCanvas, text=f'height {image.height}').grid(
+            column=1, row=1, sticky='w')
+        Label(infoCanvas, text=f'width {image.width}').grid(
+            column=1, row=2, sticky='w')
+        Label(infoCanvas, text=f'average {image.average()}').grid(
+            column=1, row=3, sticky='w')
+        Label(infoCanvas, text=f'standard_deviation {image.standard_deviation()}').grid(
+            column=1, row=4, sticky='w')
+        data = {
+            'level': range(image.max_gray+1),
+            'nb_pixels': image.histogram()
         }
-        
-        df = DataFrame(data,columns=['level','nb_pixels'])
 
-        figure = plt.Figure(figsize=(5,4), dpi=100)
+        df = DataFrame(data, columns=['level', 'nb_pixels'])
+
+        figure = plt.Figure(figsize=(5, 4), dpi=100)
         ax = figure.add_subplot(111)
         line = FigureCanvasTkAgg(figure, infoCanvas)
-        line.get_tk_widget().grid(column=2,row=1,rowspan=4,sticky='w')
-        df = df[['level','nb_pixels']].groupby('level').sum()
+        line.get_tk_widget().grid(column=2, row=1, rowspan=4, sticky='w')
+        df = df[['level', 'nb_pixels']].groupby('level').sum()
         df.plot(kind='line', legend=True, ax=ax, color='r', fontsize=10)
         ax.set_title('histogram')
-        
-        data={
-            'level':range(image.max_gray+1),
-            'nb_pixels':image.cumulated_histogram()
-        }
-        
-        df = DataFrame(data,columns=['level','nb_pixels'])
 
-        figure = plt.Figure(figsize=(5,4), dpi=100)
+        data = {
+            'level': range(image.max_gray+1),
+            'nb_pixels': image.cumulated_histogram()
+        }
+
+        df = DataFrame(data, columns=['level', 'nb_pixels'])
+
+        figure = plt.Figure(figsize=(5, 4), dpi=100)
         ax = figure.add_subplot(111)
         line = FigureCanvasTkAgg(figure, infoCanvas)
-        line.get_tk_widget().grid(column=3,row=1,rowspan=4,sticky='w')
-        df = df[['level','nb_pixels']].groupby('level').sum()
+        line.get_tk_widget().grid(column=3, row=1, rowspan=4, sticky='w')
+        df = df[['level', 'nb_pixels']].groupby('level').sum()
         df.plot(kind='line', legend=True, ax=ax, color='r', fontsize=10)
         ax.set_title('cummulated histogram')
-          
 
     def histogram_equalizer(self):
-        self.outputImage=self.inputImage.histogram_equalizer()
+        self.outputImage = self.inputImage.histogram_equalizer()
         self.outputImage.save_to_pgm("/tmp/output.pgm")
         self.updateOutput()
-        
+
     def updateOutput(self):
         # img = PhotoImage(file="/tmp/output.pgm")
         # canvas=Canvas(self.outputCanvas)
@@ -132,7 +173,6 @@ class GUI:
         # canvas.grid(column=1,row=2,sticky='w')
         # self.updateInfo('output')
         self.root.mainloop()
-
 
     def saveOutput(self):
         return
