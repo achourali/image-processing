@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Menu, filedialog, Canvas, PhotoImage, NW, Label, Text
+from tkinter import Menu, filedialog, Canvas, PhotoImage, NW, Label, Text, Entry
 from Image import Image
 from pandas import DataFrame
 import matplotlib.pyplot as plt
@@ -48,7 +48,7 @@ class GUI:
         self.initInputCanvas()
 
         self.initOutputCanvas()
-
+        
         self.root.mainloop()
 
     def initInputCanvas(self):
@@ -73,6 +73,8 @@ class GUI:
         self.inputImage.load_from_pgm(filename)
         self.inputCanvas.destroy()
         self.initInputCanvas()
+        self.outputCanvas.destroy()
+        self.initOutputCanvas()
         fig = plt.Figure(figsize=(4,4), dpi=96)
         ax = fig.add_subplot(111)
         ax.imshow(self.inputImage.matrix, cmap='gray')

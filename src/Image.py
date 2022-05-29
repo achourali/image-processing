@@ -73,7 +73,7 @@ class Image:
         return cumulated_histogram
 
     def saturation_transformation(self, saturation_points):
-        # points in an array of tuples (x,y)
+        # saturation_points is an array of tuples (x,y)
         trans_x = [0]
         trans_y = [0]
 
