@@ -58,6 +58,10 @@ class GUI:
             label='average filter',
             command=self.average_filter
         )
+        operations_menu.add_command(
+            label='binarize ',
+            command=self.binarize
+        )
         menubar.add_cascade(
             label="Operations",
             menu=operations_menu
@@ -223,3 +227,12 @@ class GUI:
             initialdir="./samples", title="choose file location")
         self.outputImage.save_to_pgm(filename)
         return
+    
+    def binarize(self):
+        threshold = simpledialog.askstring(
+            "Input",
+            "provide the threshold",
+            parent=self.root)
+        self.outputImage=self.inputImage.binarize(int(threshold))
+        self.updateOutput()
+        
