@@ -12,7 +12,7 @@ class GUI:
 
     def __init__(self):
         self.root.title('Image processing')
-        self.root.geometry("1700x800")
+        self.root.geometry("1700x850")
         menubar = Menu(self.root)
         self.root.config(menu=menubar)
 
@@ -49,7 +49,10 @@ class GUI:
             command=self.generate_random_noise
         )
 
-
+        operations_menu.add_command(
+            label='median filter',
+            command=self.median_filter
+        )
 
         menubar.add_cascade(
             label="Operations",
@@ -175,17 +178,27 @@ class GUI:
             "Input",
             "provide saturation points in this form: x1 y1 x2 y2 x3 y3 ...",
             parent=self.root)
-        answer=answer.split()
-        saturation_points=[]
-        while(len(answer)!=0):
-            saturation_points.append((int(answer.pop(0)),int(answer.pop(0))))
-            
-        self.outputImage=self.inputImage.saturation_transformation(saturation_points)
+        answer = answer.split()
+        saturation_points = []
+        while(len(answer) != 0):
+            saturation_points.append((int(answer.pop(0)), int(answer.pop(0))))
+
+        self.outputImage = self.inputImage.saturation_transformation(
+            saturation_points)
         self.updateOutput()
         return
-    
+
     def generate_random_noise(self):
-        self.outputImage=self.inputImage.generate_random_noise()
+        self.outputImage = self.inputImage.generate_random_noise()
+        self.updateOutput()
+
+    def median_filter(self):
+
+        answer = simpledialog.askstring(
+            "Input",
+            "provide the median filter size",
+            parent=self.root)
+        self.outputImage = self.inputImage.median_filter(int(answer))
         self.updateOutput()
 
     def saveOutput(self):
