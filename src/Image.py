@@ -102,9 +102,9 @@ class Image:
                           height=self.height, max_gray=self.max_gray)
         return new_image
 
-    def save_to_pgm(self):
+    def save_to_pgm(self,path="samples/output/{0}.pgm".format(round(time.time()))):
 
-        f = open("samples/output/{0}.pgm".format(round(time.time())), "w")
+        f = open(path, "w")
         f.write("{0}\n{1} {2}\n{3}\n".format(
             self.type, self.width, self.height, self.max_gray))
 
