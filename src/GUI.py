@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Menu, filedialog, Canvas, PhotoImage, NW, Label, Text, Entry
+from tkinter import Menu, filedialog, Canvas, PhotoImage, NW, Label, Text, Entry, simpledialog
 from Image import Image
 from pandas import DataFrame
 import matplotlib.pyplot as plt
@@ -39,6 +39,10 @@ class GUI:
             label='histogram equalizer',
             command=self.histogram_equalizer
         )
+        operations_menu.add_command(
+            label='saturation transformation',
+            command=self.saturation_transformation
+        )
 
         menubar.add_cascade(
             label="Operations",
@@ -48,7 +52,6 @@ class GUI:
         self.initInputCanvas()
 
         self.initOutputCanvas()
-        
         self.root.mainloop()
 
     def initInputCanvas(self):
@@ -75,7 +78,7 @@ class GUI:
         self.initInputCanvas()
         self.outputCanvas.destroy()
         self.initOutputCanvas()
-        fig = plt.Figure(figsize=(4,4), dpi=96)
+        fig = plt.Figure(figsize=(4, 4), dpi=96)
         ax = fig.add_subplot(111)
         ax.imshow(self.inputImage.matrix, cmap='gray')
         ax.axis('off')
@@ -148,7 +151,7 @@ class GUI:
 
         self.outputCanvas.destroy()
         self.initOutputCanvas()
-        fig = plt.Figure(figsize=(4,4), dpi=96)
+        fig = plt.Figure(figsize=(4, 4), dpi=96)
         ax = fig.add_subplot(111)
         ax.imshow(self.outputImage.matrix, cmap='gray')
         ax.axis('off')
@@ -158,6 +161,21 @@ class GUI:
 
         self.updateInfo('output')
         self.root.mainloop()
+
+    def saturation_transformation(self):
+
+        answer = simpledialog.askstring(
+            "Input",
+            "provide saturation points in this form: x1 y1 x2 y2 x3 y3 ...",
+            parent=self.root)
+        answer=answer.split()
+        saturation_points=[]
+        while(len(answer)!=0):
+            saturation_points.append((int(answer.pop(0)),int(answer.pop(0))))
+            
+        self.outputImage=self.inputImage.saturation_transformation(saturation_points)
+        self.updateOutput()
+        return
 
     def saveOutput(self):
         return
