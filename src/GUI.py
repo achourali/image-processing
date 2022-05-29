@@ -10,7 +10,7 @@ class GUI:
 
     def __init__(self):
         self.root.title('Image processing')
-        self.root.geometry("1500x800")
+        self.root.geometry("1700x800")
         menubar = Menu(self.root)
         self.root.config(menu=menubar)
 
@@ -90,6 +90,21 @@ class GUI:
         df = df[['level','nb_pixels']].groupby('level').sum()
         df.plot(kind='line', legend=True, ax=ax, color='r', fontsize=10)
         ax.set_title('histogram')
+        
+        data={
+            'level':range(image.max_gray+1),
+            'nb_pixels':image.cumulated_histogram()
+        }
+        
+        df = DataFrame(data,columns=['level','nb_pixels'])
+
+        figure = plt.Figure(figsize=(5,4), dpi=100)
+        ax = figure.add_subplot(111)
+        line = FigureCanvasTkAgg(figure, infoCanvas)
+        line.get_tk_widget().grid(column=3,row=1,rowspan=4,sticky='w')
+        df = df[['level','nb_pixels']].groupby('level').sum()
+        df.plot(kind='line', legend=True, ax=ax, color='r', fontsize=10)
+        ax.set_title('cummulated histogram')
           
 
     def saveOutput(self):
