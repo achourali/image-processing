@@ -167,11 +167,35 @@ class GUI:
         self.updateOutput()
 
     def updateOutput(self):
-        # img = PhotoImage(file="/tmp/output.pgm")
-        # canvas=Canvas(self.outputCanvas)
-        # canvas.create_image(0, 0, anchor=NW, image=img)
-        # canvas.grid(column=1,row=2,sticky='w')
-        # self.updateInfo('output')
+        
+        self.outputCanvas.destroy()
+        self.initOutputCanvas()
+        if(self.outputImage.type != "P2"):
+            img = PhotoImage(file="/tmp/output.pgm")
+            canvas = Canvas(self.outputCanvas)
+            canvas.create_image(0, 0, anchor=NW, image=img)
+            canvas.grid(column=1, row=2, sticky='w')
+        else:
+            with open("/tmp/output.pgm") as f:
+                lines = f.readlines()
+            for l in list(lines):
+                if l[0] == '#':
+                    lines.remove(l)
+            assert lines[0].strip() == 'P2'
+            data = []
+            for line in lines[1:]:
+                data.extend([int(c) for c in line.split()])
+
+            data = (np.array(data[3:]), (data[1], data[0]), data[2])
+
+            fig = plt.Figure(figsize=(6, 5), dpi=100)
+            ax = fig.add_subplot(111)
+            ax.imshow(np.reshape(data[0], data[1]), cmap='gray')
+            canvas = FigureCanvasTkAgg(fig, self.outputCanvas)
+            canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
+            canvas.draw()
+
+        self.updateInfo('output')
         self.root.mainloop()
 
     def saveOutput(self):
