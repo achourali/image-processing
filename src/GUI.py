@@ -54,6 +54,10 @@ class GUI:
             command=self.median_filter
         )
 
+        operations_menu.add_command(
+            label='average filter',
+            command=self.average_filter
+        )
         menubar.add_cascade(
             label="Operations",
             menu=operations_menu
@@ -201,5 +205,15 @@ class GUI:
         self.outputImage = self.inputImage.median_filter(int(answer))
         self.updateOutput()
 
+
+    def average_filter(self):
+        answer = simpledialog.askstring(
+            "Input",
+            "provide the average filter size",
+            parent=self.root)
+        self.outputImage = self.inputImage.average_filter(int(answer))
+        self.updateOutput()
+        
+        
     def saveOutput(self):
         return
