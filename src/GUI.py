@@ -66,6 +66,10 @@ class GUI:
             label='dilation ',
             command=self.dilation
         )
+        operations_menu.add_command(
+            label='erosion ',
+            command=self.erosion
+        )
         menubar.add_cascade(
             label="Operations",
             menu=operations_menu
@@ -247,6 +251,15 @@ class GUI:
             "provide the dilation size",
             parent=self.root)
         self.outputImage=self.inputImage.dilation(int(size))
+        self.updateOutput()
+        
+    def erosion(self):
+        
+        size = simpledialog.askstring(
+            "Input",
+            "provide the erosion size",
+            parent=self.root)
+        self.outputImage=self.inputImage.erosion(int(size))
         self.updateOutput()
         
         

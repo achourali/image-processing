@@ -235,7 +235,7 @@ class Image:
         for h in range(self.height):
             row = []
             for w in range(self.width):
-                row.append(255)
+                row.append(self.max_gray)
             new_matrix.append(row)
 
         for h in range(self.height):
@@ -252,3 +252,36 @@ class Image:
 
         return Image(matrix=new_matrix, type="P2", width=self.width,
                      height=self.height, max_gray=self.max_gray)
+        
+    
+    def erosion(self,size):
+        if (size % 2 == 0):
+            raise Exception('size must be odd')
+        
+        
+        new_matrix = []
+        for h in range(self.height):
+            row = []
+            for w in range(self.width):
+                row.append(self.matrix[h][w])
+            new_matrix.append(row)
+            
+        
+        for h in range(self.height):
+            for w in range(self.width):
+                
+                if(self.matrix[h][w] == self.max_gray):
+                    continue
+                else:
+                    for dh in range(h-size//2, h+size//2+1):
+                        for dw in range(w-size//2, w+size//2+1):
+                            if(dh < 0 or dh >= self.height or dw < 0 or dw >= self.width):
+                                continue
+                            else:
+                                if(self.matrix[dh][dw]!=0):
+                                    new_matrix[h][w]=self.max_gray
+        return Image(matrix=new_matrix, type="P2", width=self.width,
+                     height=self.height, max_gray=self.max_gray)
+            
+
+        
