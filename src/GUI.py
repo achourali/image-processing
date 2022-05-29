@@ -25,9 +25,22 @@ class GUI:
             label='Save output',
             command=self.saveOutput
         )
+        
         menubar.add_cascade(
             label="File",
             menu=file_menu
+        )
+        
+        operations_menu = Menu(menubar)
+
+        operations_menu.add_command(
+            label='histogram equalizer',
+            command=self.histogram_equalizer
+        )
+        
+        menubar.add_cascade(
+            label="Operations",
+            menu=operations_menu
         )
 
         self.inputCanvas = Canvas(self.root, width=500, height=400)
@@ -106,6 +119,20 @@ class GUI:
         df.plot(kind='line', legend=True, ax=ax, color='r', fontsize=10)
         ax.set_title('cummulated histogram')
           
+
+    def histogram_equalizer(self):
+        self.outputImage=self.inputImage.histogram_equalizer()
+        self.outputImage.save_to_pgm("/tmp/output.pgm")
+        self.updateOutput()
+        
+    def updateOutput(self):
+        # img = PhotoImage(file="/tmp/output.pgm")
+        # canvas=Canvas(self.outputCanvas)
+        # canvas.create_image(0, 0, anchor=NW, image=img)
+        # canvas.grid(column=1,row=2,sticky='w')
+        # self.updateInfo('output')
+        self.root.mainloop()
+
 
     def saveOutput(self):
         return
