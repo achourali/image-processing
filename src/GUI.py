@@ -218,4 +218,8 @@ class GUI:
         self.updateOutput()
 
     def saveOutput(self):
+        
+        filename = filedialog.asksaveasfilename(
+            initialdir="./samples", title="choose file location")
+        self.outputImage.save_to_pgm(filename)
         return
