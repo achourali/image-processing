@@ -44,6 +44,13 @@ class GUI:
             command=self.saturation_transformation
         )
 
+        operations_menu.add_command(
+            label='generate salt & pepper noise',
+            command=self.generate_random_noise
+        )
+
+
+
         menubar.add_cascade(
             label="Operations",
             menu=operations_menu
@@ -176,6 +183,10 @@ class GUI:
         self.outputImage=self.inputImage.saturation_transformation(saturation_points)
         self.updateOutput()
         return
+    
+    def generate_random_noise(self):
+        self.outputImage=self.inputImage.generate_random_noise()
+        self.updateOutput()
 
     def saveOutput(self):
         return
