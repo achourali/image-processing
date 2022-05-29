@@ -127,6 +127,10 @@ class GUI:
             column=1, row=3, sticky='w')
         Label(infoCanvas, text=f'standard_deviation {image.standard_deviation()}').grid(
             column=1, row=4, sticky='w')
+        if(element == "output"):
+            Label(infoCanvas, text=f'signal to noise ratio {Image.signal_to_noise_ratio(self.inputImage,self.outputImage)}').grid(
+                column=1, row=5, sticky='w')
+
         data = {
             'level': range(image.max_gray+1),
             'nb_pixels': image.histogram()
@@ -205,7 +209,6 @@ class GUI:
         self.outputImage = self.inputImage.median_filter(int(answer))
         self.updateOutput()
 
-
     def average_filter(self):
         answer = simpledialog.askstring(
             "Input",
@@ -213,7 +216,6 @@ class GUI:
             parent=self.root)
         self.outputImage = self.inputImage.average_filter(int(answer))
         self.updateOutput()
-        
-        
+
     def saveOutput(self):
         return
