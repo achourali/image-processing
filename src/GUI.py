@@ -62,6 +62,10 @@ class GUI:
             label='binarize ',
             command=self.binarize
         )
+        operations_menu.add_command(
+            label='dilation ',
+            command=self.dilation
+        )
         menubar.add_cascade(
             label="Operations",
             menu=operations_menu
@@ -98,7 +102,7 @@ class GUI:
         self.initOutputCanvas()
         fig = plt.Figure(figsize=(4, 4), dpi=96)
         ax = fig.add_subplot(111)
-        ax.imshow(self.inputImage.matrix, cmap='gray')
+        ax.imshow(self.inputImage.matrix, cmap='gray', vmin=0, vmax=self.inputImage.max_gray)
         ax.axis('off')
         canvas = FigureCanvasTkAgg(fig, self.inputCanvas)
         canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
@@ -175,7 +179,7 @@ class GUI:
         self.initOutputCanvas()
         fig = plt.Figure(figsize=(4, 4), dpi=96)
         ax = fig.add_subplot(111)
-        ax.imshow(self.outputImage.matrix, cmap='gray')
+        ax.imshow(self.outputImage.matrix, cmap='gray', vmin=0, vmax=self.outputImage.max_gray)
         ax.axis('off')
         canvas = FigureCanvasTkAgg(fig, self.outputCanvas)
         canvas.get_tk_widget().grid(column=1, row=2, sticky='w')
@@ -235,4 +239,15 @@ class GUI:
             parent=self.root)
         self.outputImage=self.inputImage.binarize(int(threshold))
         self.updateOutput()
+        
+    def dilation(self):
+        
+        size = simpledialog.askstring(
+            "Input",
+            "provide the dilation size",
+            parent=self.root)
+        self.outputImage=self.inputImage.dilation(int(size))
+        self.updateOutput()
+        
+        
         
