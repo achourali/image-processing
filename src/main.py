@@ -1,6 +1,6 @@
 from GUI import GUI
 from Image import Image
-# gui=GUI()
+gui=GUI()
 
 
 path1 = 'samples/github.pgm'
