@@ -70,6 +70,16 @@ class GUI:
             label='erosion ',
             command=self.erosion
         )
+        
+        operations_menu.add_command(
+            label='opening ',
+            command=self.opening
+        )
+        
+        operations_menu.add_command(
+            label='closing ',
+            command=self.closing
+        )
         menubar.add_cascade(
             label="Operations",
             menu=operations_menu
@@ -262,5 +272,23 @@ class GUI:
         self.outputImage=self.inputImage.erosion(int(size))
         self.updateOutput()
         
+    def closing(self):
+        size = simpledialog.askstring(
+            "Input",
+            "provide the closing size",
+            parent=self.root)
+        self.outputImage=self.inputImage.dilation(int(size)).erosion(int(size))
+        self.updateOutput()
+        
+        
+    def opening(self):
+        size = simpledialog.askstring(
+            "Input",
+            "provide the opening size",
+            parent=self.root)
+        self.outputImage=self.inputImage.erosion(int(size)).dilation(int(size))
+        self.updateOutput()
+        
+                
         
         
