@@ -11,3 +11,7 @@ This is a python app that manipulates pgm images :
 - binarize image 
 - applying morphological operations to a binary image (dilation , erosion , opening , closing)
 
+
+
+https://user-images.githubusercontent.com/51541385/170897408-c5009579-4d60-46be-b4d3-0e9656192292.mp4
+
